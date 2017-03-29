@@ -1,17 +1,16 @@
-[http]
 [user]
-	email = k.sobolev@securitycode.ru
-	name = Sobolev Kirill
+	email = sobolev.kirill@finch-meirose.com
+	name = Sobole Kirill
 [core]
 	editor = vim
 [alias]
 	co = checkout
-	st = status
+	comend = commit --amend
 	ci = commit
+	st = status
 	br = branch
-	blog = log --decorate --oneline --branches --graph -15
-	comend = commit -a --amend
-[http]
-	proxy = http://gate1.securitycode.ru:4343
-[https]
-	proxy = http://k.sobolev:Kir25878563@proxy1.securitycode.ru:4343
+	lg = log --graph --branches --remotes --pretty=format:'%C(yellow)%h%Creset -%C(auto)%d%C(reset) %s %Cgreen(%cr) %C(blue)<%an>%Creset' --abbrev-commit -n 20
+
+#	blog = log --branches --decorate --oneline --graph --remotes
+[push]
+	default = simple
