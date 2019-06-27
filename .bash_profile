@@ -1,7 +1,21 @@
-export JAVA_HOME=(/usr/bin/java)
-export M2_HOME=/usr/local/apache-maven-3.5.0
-export PATH=$PATH:$M2_HOME/bin
+export JENV_ROOT=/usr/local/opt/jenv
+if which jenv > /dev/null; then eval "$(jenv init -)"; fi
 
+export M2_HOME=/usr/local/apache-maven-3.5.0
+export PATH=$PATH:$M2_HOME/bin:$HOME/scripts
+function cs () {
+    cd "$@" && ls
+}
+
+# to remove images by `like` match
+function drmilike () {
+    docker rmi -f `docker images | grep $@ | awk '{print $3}'`
+}
+function dcu() {
+  docker-compose up -d --build
+  docker-compose logs -f
+}
+# docker
 
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
@@ -10,6 +24,21 @@ export PATH=$PATH:$M2_HOME/bin
 alias gr='grep -nrw'
 alias fn='find . -name'
 alias hg='history | grep --colour'
+alias lg='git lg'
+alias co='git co'
+alias br='git br'
+alias st='git st'
+alias diff='git diff'
+alias pull='git pull'
+alias push='git push'
+alias redis='redis-cli'
+alias dcd='docker-compose down'
+alias dcl='docker-compose logs'
+alias ds='docker stop `${docker ps -q}`'
+alias deploy='mvn deploy'
+alias installm='cd /Users/sobolev/Finch/news888-app/news888-model && mvn clean install -DskipTests=true && cd -'
+alias install='mvn  clean install -DskipTests=true'
+alias compile='mvn compile -DskipTests=true'
 
 # If not running interactively, don't do anything
 case $- in
@@ -64,12 +93,17 @@ if [ -n "$force_color_prompt" ]; then
 	color_prompt=
     fi
 fi
+parse_git_branch() {
+     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+
 
 if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$`parse_git_branch`\[\033[00m\]$ '
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
+
 unset color_prompt force_color_prompt
 
 # If this is an xterm set the title to user@host:dir
@@ -125,7 +159,12 @@ if ! shopt -oq posix; then
   fi
 fi
 
-source /usr/local/git/contrib/completion/git-completion.bash
 if [ -f $(brew --prefix)/etc/bash_completion ]; then
     . $(brew --prefix)/etc/bash_completion
 fi
+
+[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion || {
+    # if not found in /usr/local/etc, try the brew --prefix location
+    [ -f "$(brew --prefix)/etc/bash_completion.d/git-completion.bash" ] && \
+        . $(brew --prefix)/etc/bash_completion.d/git-completion.bash
+}
